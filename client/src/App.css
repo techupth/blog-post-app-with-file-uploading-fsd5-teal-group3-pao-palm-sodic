@@ -215,7 +215,21 @@ form h1 {
   display: flex;
   justify-content: flex-end;
 }
-
+.image-preview {
+  width: 250px;
+  height: 300px;
+}
+.avatar {
+  cursor: pointer;
+  background-color: var(--secondary-color);
+  border-radius: 30px;
+  padding: 20px;
+  width: 130px;
+  color: white;
+  font-size: 30px;
+  outline: none;
+  border: 5px solid var(--secondary-color);
+}
 /* general elements */
 button {
   cursor: pointer;
