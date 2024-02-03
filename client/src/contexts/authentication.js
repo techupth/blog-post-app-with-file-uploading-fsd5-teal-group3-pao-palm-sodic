@@ -35,7 +35,11 @@ function AuthProvider(props) {
 
   // register the user
   const register = async (data) => {
-    await axios.post("http://localhost:4000/auth/register", data);
+    console.log(data);
+    await axios.post("http://localhost:4000/auth/register", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
     navigate("/login");
   };
 

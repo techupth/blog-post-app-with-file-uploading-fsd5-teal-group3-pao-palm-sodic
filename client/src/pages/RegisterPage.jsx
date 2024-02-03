@@ -1,25 +1,49 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/authentication";
+import { createClient } from "@supabase/supabase-js";
+const supabaseUrl = "https://xvmmxtesjvurqkkjslux.supabase.co";
+const supabaseKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh2bW14dGVzanZ1cnFra2pzbHV4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwNjI0NTQ0OCwiZXhwIjoyMDIxODIxNDQ4fQ.VhHxjnJr-KSoFJbnKHgxU5o-asgZIaYVRqWV0Kk2nEQ";
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 function RegisterPage() {
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
-
+  const [avatar, setAvatar] = useState([]);
   const { register } = useAuth();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = {
-      username,
-      password,
-      firstName,
-      lastName,
-    };
-    register(data);
+    const formData = new FormData();
+
+    formData.append("username", username);
+    formData.append("password", password);
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    avatar.forEach((file) => {
+      formData.append("avatar", file);
+    });
+
+    register(formData);
   };
 
+  console.log(avatar);
+  const handleAvatar = (e) => {
+    e.preventDefault();
+    // if (Object.keys(avatar).length === 2) {
+    //   return;
+    // }
+    // const id = Date.now();
+    setAvatar([...avatar, e.target.files[0]]);
+  };
+  const handleDeleteAvatar = (e, key) => {
+    e.preventDefault();
+    const newAvatar = { ...avatar };
+    delete newAvatar[key];
+    setAvatar({ ...newAvatar });
+  };
   return (
     <div className="register-form-container">
       <form className="register-form" onSubmit={handleSubmit}>
@@ -93,9 +117,31 @@ function RegisterPage() {
               type="file"
               placeholder="Enter last name here"
               multiple
-              onChange={(event) => {}}
+              onChange={handleAvatar}
             />
           </label>
+          {Object.keys(avatar).length !== 0 &&
+            Object.keys(avatar).map((key) => {
+              const file = avatar[key];
+              return (
+                <div key={key}>
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={file.name}
+                    width={100}
+                  />
+                  <button
+                    width={30}
+                    style={{ width: "20px", textAlign: "center" }}
+                    onClick={(e) => {
+                      handleDeleteAvatar(e, key);
+                    }}
+                  >
+                    X
+                  </button>
+                </div>
+              );
+            })}
         </div>
         <div className="form-actions">
           <button type="submit">Submit</button>
